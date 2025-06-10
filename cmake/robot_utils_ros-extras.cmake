@@ -1,0 +1,8 @@
+find_package(qpOASES QUIET)
+if(qpOASES_FOUND)
+  add_definitions(-DHAS_QPOASES)
+endif()
+find_package(NLopt QUIET)
+if(NLopt_FOUND)
+  add_definitions(-DHAS_NLOPT)
+endif()

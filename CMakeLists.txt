@@ -15,10 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
-add_subdirectory(third_party/robot_utils)
-get_target_property(
-  robot_utils_INCLUDE_DIRS robot_utils INTERFACE_INCLUDE_DIRECTORIES)
+find_package(yaml-cpp REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -106,15 +104,18 @@ get_target_property(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES robot_utils_ros
-#  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp
-  DEPENDS robot_utils
+  INCLUDE_DIRS include third_party/robot_utils/include
+  LIBRARIES robot_utils robot_utils_ros
+  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp
+  DEPENDS EIGEN3 YAML_CPP
+  CFG_EXTRAS robot_utils_ros-extras.cmake
 )
 
 ###########
 ## Build ##
 ###########
+
+add_subdirectory(third_party/robot_utils)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -131,7 +132,7 @@ add_library(${PROJECT_NAME}
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} robot_utils)
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -152,11 +153,6 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   robot_utils
-)
-
-# 包含 robot_utils 的头文件
-target_include_directories(${PROJECT_NAME}
-  INTERFACE robot_utils_INCLUDE_DIRS
 )
 
 #############
